@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="逐項確認品牌專案的交付範圍，整理成可分享的確認摘要。">
+  <meta name="color-scheme" content="light">
+  <title>品牌交付確認清單</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%23283b2e'/%3E%3Cpath d='M20 8v24M8 20h24M12 12l16 16m0-16L12 28' stroke='%23e6eece' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./catalog.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="screen">
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a class="wordmark" href="#top"><span class="brand-mark" aria-hidden="true">✳</span><span>品牌交付工作台<small>BRAND HANDOFF STUDIO</small></span></a>
+        <span id="save-status" class="save-status" role="status"><span aria-hidden="true"></span>草稿儲存在此瀏覽器</span>
+      </div>
+    </header>
+    <main id="top" class="wrap">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="hero-dot"></span> PROJECT SCOPE <span class="eyebrow-rule"></span> 01—07</p>
+          <h1 id="page-title">品牌交付物<br><span>確認清單</span></h1>
+          <p class="hero-description">從品牌策略到文案素材，逐項確認這次專案的交付範圍，<wbr>把雙方的共識整理成一份可帶走的摘要。</p>
+          <a class="hero-link" href="#project">開始填寫 <span aria-hidden="true">↘</span></a>
+        </div>
+        <svg class="hero-art" viewBox="0 0 510 322" fill="none" aria-hidden="true">
+          <defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M26 0H0V26" stroke="#dce8c6" stroke-opacity=".24" stroke-width="1"/></pattern></defs>
+          <rect x="39" y="30" width="416" height="260" fill="url(#grid)"/>
+          <path d="M39 45V30h15m386 0h15v15M39 275v15h15m386 0h15v-15" stroke="#c8d6b1" stroke-opacity=".65"/>
+          <circle cx="252" cy="160" r="128" stroke="#d6e5ba" stroke-opacity=".34" stroke-dasharray="3 5"/>
+          <g transform="translate(236 154) rotate(-13)"><rect x="-81" y="-83" width="162" height="166" rx="15" fill="#48614d" stroke="#9eb28f"/><path d="M-59-59h50m-50 9h27" stroke="#afc19d" stroke-width="2" stroke-linecap="round"/></g>
+          <g transform="translate(275 168) rotate(11)"><rect x="-83" y="-88" width="166" height="176" rx="15" fill="#e4edca"/><path d="M-56-54h45m-45 10h24" stroke="#667956" stroke-width="2" stroke-linecap="round"/><circle cx="0" cy="12" r="37" stroke="#657954" stroke-width="1"/><path d="M0-18v60m-30-30h60m-51-21 42 42m0-42-42 42" stroke="#334b35" stroke-width="2.6" stroke-linecap="round"/><path d="M-56 64h112" stroke="#a5b68e"/><circle cx="52" cy="-51" r="4" fill="#334b35"/></g>
+          <g transform="translate(361 217) rotate(-9)"><rect x="-26" y="-25" width="52" height="50" rx="13" fill="#edb59f"/><path d="m-10 0 7 7L11-8" stroke="#3b4130" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+          <path d="M110 93h18m-9-9v18m277 28h14m-7-7v14" stroke="#e4edca" stroke-linecap="round"/>
+          <text x="54" y="276" fill="#b7c5a5" font-size="10" letter-spacing="2.3" font-family="monospace">SCOPE / 07</text>
+        </svg>
+      </section>
+
+      <div class="workspace">
+        <div class="editor">
+          <section id="project" class="project panel" aria-labelledby="project-title">
+            <div class="section-heading"><span class="section-number">01</span><div><h2 id="project-title">專案資訊</h2><p>填入基本資料，方便雙方辨識這份確認結果。</p></div></div>
+            <div class="field-grid">
+              <label>專案名稱<input data-project="name" placeholder="例：春季品牌識別更新" maxlength="120"></label>
+              <label>業主／品牌名稱<input data-project="client" placeholder="例：品牌名稱或公司名稱" maxlength="120"></label>
+              <label>確認人<input data-project="contact" placeholder="例：王小姐" maxlength="120"></label>
+              <label>確認日期<input data-project="date" type="date"></label>
+              <label class="wide">專案總備註<textarea data-project="note" rows="2" maxlength="3000" placeholder="可填寫時程、適用範圍或其他共同約定"></textarea></label>
+            </div>
+          </section>
+          <section id="checklist" class="checklist" aria-labelledby="checklist-title">
+            <div class="section-heading checklist-heading"><span class="section-number">02</span><div><h2 id="checklist-title">交付物清單</h2><p>先選擇各類別的需求狀態，再展開勾選子項或補充備註。 <a href="#summary">前往摘要</a></p></div></div>
+            <div class="distinction"><span aria-hidden="true">i</span><p><strong>品牌書</strong>整理定位、價值與品牌故事。<strong>品牌視覺書</strong>則規範標誌、色彩、字體等識別的使用方式。</p></div>
+            <div id="categories" class="categories"></div>
+          </section>
+        </div>
+        <aside id="summary" class="panel summary" aria-labelledby="summary-title">
+          <div class="section-heading"><span class="section-number">03</span><div><h2 id="summary-title">確認摘要</h2><p>隨填寫內容即時更新</p></div></div>
+          <div class="progress-label"><span>確認進度</span><strong id="progress-text">0 / 7</strong></div>
+          <progress id="progress" max="7" value="0" aria-label="已選擇需求狀態的類別"></progress>
+          <div id="counts" class="counts"></div>
+          <p id="summary-project" class="summary-project" hidden></p>
+          <div id="summary-groups" class="summary-groups"></div>
+          <div class="summary-actions">
+            <button id="print" class="button primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V3h12v5M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 14h12v7H6zM17 12h2"/></svg>列印／儲存 PDF</button>
+            <div class="download-actions">
+              <button id="export" class="button secondary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg>下載 JSON</button>
+              <button id="export-jpg" class="button secondary" type="button">下載 JPG</button>
+            </div>
+            <p id="export-feedback" role="status" class="local-note" hidden></p>
+          </div>
+          <p class="local-note">資料只保存在此瀏覽器。換裝置前，可先下載或列印留存。</p>
+        </aside>
+      </div>
+      <noscript><p class="distinction">請啟用 JavaScript 以填寫清單與產生摘要。</p></noscript>
+      <footer><span>品牌交付工作台 <span aria-hidden="true">·</span> 確認清單</span><button type="button" id="reset" class="text-button">清除本機草稿</button></footer>
+    </main>
+  </div>
+  <main id="print-report" class="print-report" aria-label="品牌交付物確認結果"></main>
+</body>
+</html>

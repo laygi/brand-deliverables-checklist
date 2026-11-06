@@ -8,6 +8,11 @@ const fields = [
 ];
 const byId = (id) => document.getElementById(id);
 const asText = (value) => typeof value === 'string' ? value : '';
+const timestampFormat = new Intl.DateTimeFormat('zh-TW', {
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', second: '2-digit',
+  hourCycle: 'h23', timeZoneName: 'longOffset',
+});
 
 function restore(saved) {
   const project = Object.fromEntries(fields.map(([key]) => [key, asText(saved?.project?.[key])]));
@@ -78,11 +83,11 @@ function renderEditor() {
         </fieldset>
       </div>
       <p class="category-purpose">${purpose}</p>
-      <details>
+      <details open>
         <summary></summary>
         <div class="detail-body">
           <div class="item-list">
-            ${items.map(([key, title, description]) => `<label class="item"><input type="checkbox" value="${key}" aria-describedby="desc-${id}-${key}"><span>${title}<small id="desc-${id}-${key}">${description}</small></span></label>`).join('')}
+            ${items.map(([key, title, description]) => `<label class="item"><input type="checkbox" value="${key}" aria-labelledby="item-${id}-${key}" aria-describedby="desc-${id}-${key}"><span><span id="item-${id}-${key}">${title}</span><small id="desc-${id}-${key}">${description}</small></span></label>`).join('')}
           </div>
           <label>${name}備註<textarea rows="2" maxlength="3000" placeholder="例如：數量、使用情境、檔案格式或待確認事項"></textarea></label>
         </div>
@@ -128,7 +133,7 @@ function renderSummary() {
     return badge;
   }));
   const caption = byId('summary-project');
-  caption.textContent = [project.name, project.client].filter(Boolean).join(' ／ ');
+  caption.textContent = [project.name, project.client, project.date && `確認日期 ${project.date}`].filter(Boolean).join(' ／ ');
   caption.hidden = !caption.textContent;
   const groups = statuses.map(([key, label]) => {
     const matches = categories.filter((entry) => entry.status === (key || 'unanswered'));
@@ -178,6 +183,7 @@ function update(event) {
 function reportRows({ project, counts, categories }) {
   const rows = [
     ['h1', '品牌交付物確認結果'],
+    ['p', `檔案產生時間（裝置時間）｜${timestampFormat.format(new Date())}`],
     ['p', `需要 ${counts.need}　不需要 ${counts.exclude}　待討論 ${counts.discuss}　尚未選擇 ${counts.unanswered}`],
     ['h2', '專案資訊'],
   ];
@@ -217,7 +223,13 @@ function download(blob, name) {
 }
 
 function exportJson() {
-  const data = { schemaVersion: 1, exportedAt: new Date().toISOString(), ...result() };
+  const exportedAt = new Date();
+  const data = {
+    schemaVersion: 1,
+    exportedAt: exportedAt.toISOString(),
+    exportedAtLocal: timestampFormat.format(exportedAt),
+    ...result(),
+  };
   download(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), filename('json'));
 }
 
@@ -272,9 +284,9 @@ function exportJpg() {
   }
   canvas.width = width;
   canvas.height = y + margin;
-  context.fillStyle = '#fffef9';
+  context.fillStyle = '#fff';
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = '#273d31';
+  context.fillStyle = '#151515';
   context.textBaseline = 'top';
   for (const row of rows) {
     context.font = row.font;

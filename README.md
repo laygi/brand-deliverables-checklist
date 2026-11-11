@@ -4,6 +4,8 @@
 
 ## 填寫與交接
 
+可在頁面頂端選擇「繁中」或「English」。語言選擇會記在目前瀏覽器，兩種語言共用草稿。介面、交付細項與匯出標籤會切換，填寫內容保留原文。
+
 1. 填入專案名稱、業主／品牌名稱、確認人、日期與總備註。
 2. 逐類選擇「需要」「不需要」或「待討論」。各類別預設顯示子項及說明，點選整列即可勾選，再視需要補上備註。未作答的類別會保留為「尚未選擇」。
 3. 在「確認摘要」檢查各類別狀態，再下載 JSON、下載 JPG，或透過瀏覽器列印／儲存 PDF。JSON 保留所有勾選與備註，以及每個類別的需求狀態。JPG 為便於傳閱的單張圖片，超長摘要可改用 JSON 或 PDF。
@@ -21,7 +23,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 ## 調整內容
 
-在 `catalog.js` 修改類別名稱、用途及子項。保留原有類別與子項 `id` 可以沿用已有的草稿。專案欄位與頁面文字可於 `index.html` 調整，視覺樣式位於 `styles.css`。若新增或移除專案欄位，請同步更新 `app.js` 的 `fields`。
+在 `catalog.js` 修改中文類別名稱、用途及子項，並在 `locales.js` 的 `catalogEnglish` 同步更新英文內容。保留原有類別與子項 `id` 可以沿用已有的草稿。頁面中文文字位於 `index.html`，英文對照及動態標籤位於 `locales.js`，視覺樣式位於 `styles.css`。
 
 ## 部署到 GitHub Pages
 
@@ -31,4 +33,4 @@ GitHub Free 的 Pages 需要公開儲存庫。網站和原始碼都可由網路�
 2. 在儲存庫的 **Settings → Pages → Build and deployment**，將 **Source** 設成 **GitHub Actions**。
 3. 在 **Actions** 選擇 **Publish checklist to GitHub Pages**，按 **Run workflow** 並選擇主要分支。部署成功後，從工作流程或 Pages 設定取得網址。每次更新檔案後可手動重跑。
 
-部署流程只打包 `index.html`、`styles.css`、`catalog.js` 與 `app.js`。資源使用相對路徑，因此可在 GitHub Pages 專案子路徑運作。
+部署流程只打包 `index.html`、`styles.css`、`catalog.js`、`locales.js` 與 `app.js`。資源使用相對路徑，因此可在 GitHub Pages 專案子路徑運作。

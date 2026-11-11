@@ -1,25 +1,72 @@
 const storageKey = 'brand-handoff-checklist:v1';
-const statuses = [
-  ['need', '需要'], ['exclude', '不需要'], ['discuss', '待討論'], ['', '尚未選擇'],
-];
-const fields = [
-  ['name', '專案名稱'], ['client', '業主／品牌名稱'], ['contact', '確認人'],
-  ['date', '確認日期'], ['note', '專案總備註'],
-];
+const languageKey = 'brand-handoff-checklist:language';
+const defaultLanguage = 'zh-Hant-TW';
+const statusKeys = Object.keys(checklistCopy[defaultLanguage].statuses);
+const fieldKeys = Object.keys(checklistCopy[defaultLanguage].fields);
 const byId = (id) => document.getElementById(id);
 const asText = (value) => typeof value === 'string' ? value : '';
-const timestampFormat = new Intl.DateTimeFormat('zh-TW', {
-  year: 'numeric', month: '2-digit', day: '2-digit',
-  hour: '2-digit', minute: '2-digit', second: '2-digit',
-  hourCycle: 'h23', timeZoneName: 'longOffset',
+const languageButtons = document.querySelectorAll('[data-language]');
+const interfaceText = Array.from(document.querySelectorAll('[data-copy]'), (node) => {
+  const attribute = node.dataset.copyAttr;
+  return { node, attribute, original: attribute ? node.getAttribute(attribute) : node.textContent };
 });
+const englishCatalog = catalog.map((category) => {
+  const translated = catalogEnglish[category.id];
+  return {
+    ...category,
+    ...translated,
+    items: category.items.map(([key, title, description]) => [key, ...(translated?.items[key] ?? [title, description])]),
+  };
+});
+let language = defaultLanguage;
+let copy = checklistCopy[language];
+let displayCatalog = catalog;
+let timestampFormat;
+
+function preferredLanguage() {
+  try {
+    return localStorage.getItem(languageKey) === 'en' ? 'en' : defaultLanguage;
+  } catch {
+    return defaultLanguage;
+  }
+}
+
+function renderLanguage(nextLanguage) {
+  language = nextLanguage;
+  const english = language === 'en';
+  copy = checklistCopy[language];
+  displayCatalog = english ? englishCatalog : catalog;
+  document.documentElement.lang = language;
+  timestampFormat = new Intl.DateTimeFormat(language, {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hourCycle: 'h23', timeZoneName: 'longOffset',
+  });
+  for (const { node, attribute, original } of interfaceText) {
+    const value = english ? interfaceEnglish[node.dataset.copy] : original;
+    if (attribute) node.setAttribute(attribute, value);
+    else node.textContent = value;
+  }
+  for (const label of document.querySelectorAll('[data-field-label]')) {
+    label.textContent = copy.fields[label.dataset.fieldLabel];
+  }
+  for (const button of languageButtons) {
+    button.setAttribute('aria-pressed', String(button.dataset.language === language));
+  }
+  const status = byId('save-status');
+  storageStatus(!status.hasAttribute('data-error'));
+  byId('export-feedback').hidden = true;
+  const closed = new Set(Array.from(document.querySelectorAll('.category details:not([open])'), (detail) => detail.closest('.category').dataset.category));
+  renderEditor(closed);
+  renderSummary();
+}
 
 function restore(saved) {
-  const project = Object.fromEntries(fields.map(([key]) => [key, asText(saved?.project?.[key])]));
+  const project = Object.fromEntries(fieldKeys.map((key) => [key, asText(saved?.project?.[key])]));
   const categories = Object.fromEntries(catalog.map(({ id, items }) => {
     const previous = saved?.categories?.[id];
     return [id, {
-      status: statuses.some(([key]) => key === previous?.status) ? previous.status : '',
+      status: statusKeys.includes(previous?.status) ? previous.status : '',
       items: items.filter(([key]) => previous?.items?.includes?.(key)).map(([key]) => key),
       note: asText(previous?.note),
     }];
@@ -30,7 +77,7 @@ function restore(saved) {
 function storageStatus(ok) {
   const status = byId('save-status');
   status.toggleAttribute('data-error', !ok);
-  status.lastChild.textContent = ok ? '草稿儲存在此瀏覽器' : '本機儲存不可用，請先下載';
+  status.lastChild.textContent = ok ? copy.storageReady : copy.storageError;
 }
 
 function load() {
@@ -61,14 +108,14 @@ function element(tag, value, className) {
 }
 
 function setDetailLabel(card, count) {
-  card.querySelector('summary').textContent = count ? `子項與備註（已勾選 ${count} 項）` : '子項與備註';
+  card.querySelector('summary').textContent = copy.details + (count ? copy.selected(count) : '');
 }
 
-function renderEditor() {
+function renderEditor(closed = new Set()) {
   for (const input of document.querySelectorAll('[data-project]')) {
     input.value = state.project[input.dataset.project];
   }
-  const cards = catalog.map(({ id, name, label, icon, purpose, items }, index) => {
+  const cards = displayCatalog.map(({ id, name, label, icon, purpose, items }, index) => {
     const card = element('article', '', 'category');
     card.dataset.category = id;
     card.innerHTML = `
@@ -78,18 +125,18 @@ function renderEditor() {
           <div><p class="category-kicker">${String(index + 1).padStart(2, '0')} / ${label}</p><h3>${name}</h3></div>
         </div>
         <fieldset class="choices">
-          <legend class="sr-only">${name}的需求狀態</legend>
-          ${statuses.slice(0, 3).map(([key, text]) => `<label class="choice"><input type="radio" name="${id}" value="${key}"><span>${text}</span></label>`).join('')}
+          <legend class="sr-only">${copy.categoryStatus(name)}</legend>
+          ${statusKeys.slice(0, 3).map((key) => `<label class="choice"><input type="radio" name="${id}" value="${key}"><span>${copy.statuses[key]}</span></label>`).join('')}
         </fieldset>
       </div>
       <p class="category-purpose">${purpose}</p>
-      <details open>
+      <details${closed.has(id) ? '' : ' open'}>
         <summary></summary>
         <div class="detail-body">
           <div class="item-list">
             ${items.map(([key, title, description]) => `<label class="item"><input type="checkbox" value="${key}" aria-labelledby="item-${id}-${key}" aria-describedby="desc-${id}-${key}"><span><span id="item-${id}-${key}">${title}</span><small id="desc-${id}-${key}">${description}</small></span></label>`).join('')}
           </div>
-          <label>${name}備註<textarea rows="2" maxlength="3000" placeholder="例如：數量、使用情境、檔案格式或待確認事項"></textarea></label>
+          <label>${copy.categoryNote(name)}<textarea rows="2" maxlength="3000" placeholder="${copy.categoryExample}"></textarea></label>
         </div>
       </details>`;
     const entry = state.categories[id];
@@ -103,20 +150,20 @@ function renderEditor() {
 }
 
 function result() {
-  const categories = catalog.map(({ id, name, items }) => {
+  const categories = displayCatalog.map(({ id, name, items }) => {
     const entry = state.categories[id];
     return {
       id, name, status: entry.status || 'unanswered',
-      statusLabel: statuses.find(([key]) => key === entry.status)[1],
+      statusLabel: copy.statuses[entry.status],
       selectedItems: items.filter(([key]) => entry.items.includes(key)).map(([id, name]) => ({ id, name })),
       note: entry.note.trim(),
     };
   });
-  const counts = Object.fromEntries(statuses.map(([key]) => {
+  const counts = Object.fromEntries(statusKeys.map((key) => {
     const status = key || 'unanswered';
     return [status, categories.filter((category) => category.status === status).length];
   }));
-  const project = Object.fromEntries(fields.map(([key]) => [key, state.project[key].trim()]));
+  const project = Object.fromEntries(fieldKeys.map((key) => [key, state.project[key].trim()]));
   return { project, counts, categories };
 }
 
@@ -126,21 +173,21 @@ function renderSummary() {
   byId('progress').max = categories.length;
   byId('progress').value = confirmed;
   byId('progress-text').textContent = `${confirmed} / ${categories.length}`;
-  byId('counts').replaceChildren(...statuses.slice(0, 3).map(([key, name]) => {
+  byId('counts').replaceChildren(...statusKeys.slice(0, 3).map((key) => {
     const badge = element('div', '', 'counter');
     badge.dataset.state = key;
-    badge.append(element('strong', String(counts[key])), name);
+    badge.append(element('strong', String(counts[key])), copy.statuses[key]);
     return badge;
   }));
   const caption = byId('summary-project');
-  caption.textContent = [project.name, project.client, project.date && `確認日期 ${project.date}`].filter(Boolean).join(' ／ ');
+  caption.textContent = [project.name, project.client, project.date && `${copy.fields.date} ${project.date}`].filter(Boolean).join(' / ');
   caption.hidden = !caption.textContent;
-  const groups = statuses.map(([key, label]) => {
+  const groups = statusKeys.map((key) => {
     const matches = categories.filter((entry) => entry.status === (key || 'unanswered'));
     const visible = key ? matches : matches.filter((entry) => entry.selectedItems.length || entry.note);
     if (!visible.length) return null;
     const group = element('section', '', 'summary-group');
-    group.append(element('h3', label));
+    group.append(element('h3', copy.statuses[key]));
     for (const entry of visible) {
       const line = element('div', '', 'summary-entry');
       line.append(element('strong', entry.name));
@@ -149,7 +196,7 @@ function renderSummary() {
         list.append(...entry.selectedItems.map(({ name }) => element('li', name)));
         line.append(list);
       } else if (key === 'need') {
-        line.append(element('small', '尚未指定子項'));
+        line.append(element('small', copy.noItems));
       }
       if (entry.note) line.append(element('small', entry.note));
       group.append(line);
@@ -157,7 +204,7 @@ function renderSummary() {
     return group;
   }).filter(Boolean);
   const summary = byId('summary-groups');
-  summary.replaceChildren(...(groups.length ? groups : [element('p', '選擇需求狀態後，這裡會整理你的交付清單。', 'empty-state')]));
+  summary.replaceChildren(...(groups.length ? groups : [element('p', copy.empty, 'empty-state')]));
   byId('summary').classList.toggle('expanded-summary', groups.length > 0);
 }
 
@@ -181,23 +228,24 @@ function update(event) {
 }
 
 function reportRows({ project, counts, categories }) {
+  const countsLine = statusKeys.map((key) => `${copy.statuses[key]} ${counts[key || 'unanswered']}`).join('  ·  ');
   const rows = [
-    ['h1', '品牌交付物確認結果'],
-    ['p', `檔案產生時間（裝置時間）｜${timestampFormat.format(new Date())}`],
-    ['p', `需要 ${counts.need}　不需要 ${counts.exclude}　待討論 ${counts.discuss}　尚未選擇 ${counts.unanswered}`],
-    ['h2', '專案資訊'],
+    ['h1', byId('print-report').getAttribute('aria-label')],
+    ['p', `${copy.timestamp} | ${timestampFormat.format(new Date())}`],
+    ['p', countsLine],
+    ['h2', byId('project-title').textContent],
   ];
-  for (const [key, label] of fields) {
-    rows.push(['p', `${label}｜${project[key] || '未填寫'}`]);
+  for (const key of fieldKeys) {
+    rows.push(['p', `${copy.fields[key]} | ${project[key] || copy.notProvided}`]);
   }
-  rows.push(['h2', '交付物清單']);
+  rows.push(['h2', byId('checklist-title').textContent]);
   for (const entry of categories) {
-    rows.push(['h3', `${entry.name}｜${entry.statusLabel}`]);
+    rows.push(['h3', `${entry.name} | ${entry.statusLabel}`]);
     for (const item of entry.selectedItems) {
-      rows.push(['p', `・${item.name}${entry.status === 'exclude' ? '（已勾選，依類別狀態不列入交付）' : ''}`]);
+      rows.push(['p', `• ${item.name}${entry.status === 'exclude' ? copy.excludedItem : ''}`]);
     }
-    if (!entry.selectedItems.length && entry.status === 'need') rows.push(['p', '尚未指定子項']);
-    if (entry.note) rows.push(['p', `備註｜${entry.note}`]);
+    if (!entry.selectedItems.length && entry.status === 'need') rows.push(['p', copy.noItems]);
+    if (entry.note) rows.push(['p', `${copy.notes} | ${entry.note}`]);
   }
   return rows;
 }
@@ -208,7 +256,7 @@ function renderPrint() {
 
 function filename(extension) {
   const prefix = state.project.name.trim().replace(/[<>:"/\\|?*\u0000-\u001f]+/g, '-').slice(0, 60);
-  return `${prefix ? `${prefix}-` : ''}品牌交付確認.${extension}`;
+  return `${prefix ? `${prefix}-` : ''}${copy.filename}.${extension}`;
 }
 
 function download(blob, name) {
@@ -226,6 +274,7 @@ function exportJson() {
   const exportedAt = new Date();
   const data = {
     schemaVersion: 1,
+    language,
     exportedAt: exportedAt.toISOString(),
     exportedAtLocal: timestampFormat.format(exportedAt),
     ...result(),
@@ -259,7 +308,7 @@ function exportJpg() {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   if (!context) {
-    fail('此瀏覽器無法產生 JPG，請下載 JSON 或列印。');
+    fail(copy.jpgError);
     return;
   }
   const width = 960;
@@ -279,7 +328,7 @@ function exportJpg() {
     return { font, lines, top, leading };
   });
   if (y + margin > 15000) {
-    fail('摘要過長，無法存成單張 JPG。請下載 JSON 或列印完整內容。');
+    fail(copy.jpgTooLong);
     return;
   }
   canvas.width = width;
@@ -295,7 +344,7 @@ function exportJpg() {
   const name = filename('jpg');
   canvas.toBlob((blob) => {
     if (blob?.type === 'image/jpeg') download(blob, name);
-    else fail('此瀏覽器無法產生 JPG，請下載 JSON 或列印。');
+    else fail(copy.jpgError);
   }, 'image/jpeg', 0.92);
 }
 
@@ -310,7 +359,7 @@ byId('print').addEventListener('click', () => {
   window.print();
 });
 byId('reset').addEventListener('click', () => {
-  if (!window.confirm('要清除這個瀏覽器中的專案資訊、勾選結果與備註嗎？')) return;
+  if (!window.confirm(copy.resetPrompt)) return;
   try {
     localStorage.removeItem(storageKey);
     storageStatus(true);
@@ -321,5 +370,16 @@ byId('reset').addEventListener('click', () => {
   renderEditor();
   renderSummary();
 });
-renderEditor();
-renderSummary();
+for (const button of languageButtons) {
+  button.addEventListener('click', () => {
+    const nextLanguage = button.dataset.language;
+    if (language === nextLanguage) return;
+    try {
+      localStorage.setItem(languageKey, nextLanguage);
+    } catch {
+      // The current page can still switch languages without local storage.
+    }
+    renderLanguage(nextLanguage);
+  });
+}
+renderLanguage(preferredLanguage());

@@ -24,9 +24,10 @@ jobs:
       - name: Prepare public files
         run: |
           node --check catalog.js
+          node --check locales.js
           node --check app.js
           mkdir -p dist
-          cp index.html styles.css catalog.js app.js dist/
+          cp index.html styles.css catalog.js locales.js app.js dist/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

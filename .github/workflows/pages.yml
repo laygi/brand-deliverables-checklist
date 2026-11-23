@@ -28,7 +28,6 @@ jobs:
           node --check app.js
           mkdir -p dist
           cp index.html styles.css catalog.js locales.js app.js dist/
-          cp -R assets dist/assets
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

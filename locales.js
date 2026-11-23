@@ -169,13 +169,13 @@ const catalogEnglish = {
 
 const guideCopy = {
   'zh-Hant-TW': [
-    { id: 'fill', title: '先填寫專案資訊', text: '填入專案與品牌名稱、確認人及備註，讓雙方知道這份清單屬於哪個專案。畫面中的資料為填寫示例。', alt: '專案資訊欄位的示範截圖' },
-    { id: 'check', title: '逐項確認，整列都能勾選', text: '先選擇「需要／不需要／待討論」，再閱讀細項說明，點整列即可打勾。數量、格式或疑問都能寫在備註。', alt: '交付物的需求狀態、勾選子項與備註截圖' },
-    { id: 'date', title: '留下日期，下載確認紀錄', text: '填寫雙方確認日期，再下載 JPG、JSON 或列印 PDF。匯出會附上裝置產生時間與時區，方便核對，下載後即可傳給設計師。', alt: '含確認日期的摘要及下載按鈕截圖' },
+    { id: 'fill', title: '填寫專案資訊', text: '填入專案、品牌名稱與確認人，補上這次合作的備註。' },
+    { id: 'check', title: '選擇需求，逐項打勾', text: '先選「需要／不需要／待討論」，再點選要交付的細項。整列都能勾選。' },
+    { id: 'date', title: '留下日期，下載紀錄', text: '填寫確認日期，下載 JPG、JSON 或列印 PDF。檔案會附上裝置時間與時區。' },
   ],
   en: [
-    { id: 'fill', title: 'Start with your project details', text: 'Enter the project and brand name, who is confirming, and any notes so both parties can identify this checklist. The screenshot shows sample details.', alt: 'Screenshot of sample project details' },
-    { id: 'check', title: 'Choose a status, then tick the items', text: 'Choose Needed, Not needed, or To discuss. Read the item descriptions and click anywhere on a row to select it. Use notes for quantities, formats, or questions.', alt: 'Screenshot of category statuses, checkboxes, and notes' },
-    { id: 'date', title: 'Add a date and save your confirmation', text: 'Enter the date both parties confirmed the scope, then download JPG or JSON, or print to PDF. Exports include the device time and time zone for reference. Send the saved file to your designer.', alt: 'Screenshot of the dated summary and download buttons' },
+    { id: 'fill', title: 'Add project details', text: 'Enter the project, brand name, and who is confirming. Add any notes about the scope.' },
+    { id: 'check', title: 'Choose and tick', text: 'Choose Needed, Not needed, or To discuss. Then select your deliverables by clicking anywhere on a row.' },
+    { id: 'date', title: 'Date it and save', text: 'Add the confirmation date, then download JPG or JSON, or print to PDF. Exports include the device time and time zone.' },
   ],
 };

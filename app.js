@@ -392,16 +392,37 @@ let guideIndex = 0;
 function renderGuide() {
   const slides = guideCopy[language];
   const slide = slides[guideIndex];
-  const image = byId('guide-image');
-  image.src = `./assets/guide-${language === 'en' ? 'en' : 'zh'}-${slide.id}.jpg`;
-  image.alt = slide.alt;
+  const visual = byId('guide-visual');
+  const sample = element('div', '', 'guide-sample');
+  if (slide.id === 'fill') {
+    for (const key of ['name', 'client']) {
+      sample.append(element('span', copy.fields[key], 'guide-sample-label'));
+      const field = element('span', '', 'guide-sample-field');
+      field.append(element('span', '', 'guide-sample-line'));
+      sample.append(field);
+    }
+  } else if (slide.id === 'check') {
+    const status = element('div', copy.statuses.need, 'guide-sample-status');
+    sample.append(status);
+    displayCatalog[0].items.slice(0, 2).forEach(([, title], index) => {
+      const row = element('div', '', 'guide-sample-row');
+      row.append(element('span', index === 0 ? '✓' : '', 'guide-sample-check' + (index ? ' empty' : '')), element('span', title));
+      sample.append(row);
+    });
+  } else {
+    sample.append(element('span', copy.fields.date, 'guide-sample-label'));
+    sample.append(element('div', 'YYYY / MM / DD', 'guide-sample-date'));
+    const formats = element('div', '', 'guide-sample-formats');
+    formats.append(...['JPG', 'JSON', 'PDF'].map((format) => element('span', format)));
+    sample.append(formats);
+  }
+  visual.replaceChildren(sample);
   byId('guide-title').textContent = slide.title;
   byId('guide-text').textContent = slide.text;
-  byId('guide-step').textContent = `${guideIndex + 1} / ${slides.length}`;
   byId('guide-prev').disabled = guideIndex === 0;
   byId('guide-next').disabled = guideIndex === slides.length - 1;
   byId('guide-pages').replaceChildren(...slides.map((item, index) => {
-    const button = element('button', String(index + 1));
+    const button = element('button');
     button.type = 'button';
     button.setAttribute('aria-label', item.title);
     button.setAttribute('aria-current', String(index === guideIndex));

@@ -177,29 +177,39 @@ footer { display: flex; justify-content: space-between; align-items: center; gap
 html:has(.guide[open]) { overflow: hidden; }
 footer { flex-wrap: wrap; }
 footer > span { margin-right: auto; }
-.guide { width: min(620px, calc(100% - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--white); color: var(--ink); overflow-y: auto; box-shadow: 0 24px 90px #0006; }
+.guide { width: min(420px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--white); color: var(--ink); overflow-y: auto; box-shadow: 0 24px 90px #0006; }
 .guide::backdrop { background: #0009; }
-.guide-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: var(--white); font-size: 14px; font-weight: 700; }
-.guide-close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: var(--white); color: var(--ink); font-size: 28px; line-height: 1; }
-.guide-close:hover { background: var(--silver); }
-.guide-figure { margin: 0; padding: 14px; background: var(--paper); }
-.guide-figure img { display: block; width: 100%; height: auto; max-height: 38dvh; object-fit: contain; border-radius: 6px; }
-.guide-content { padding: 18px 24px 4px; }
-.guide-step { margin: 0 0 6px; color: var(--muted); font: 13px var(--mono); }
-.guide-content h2 { margin: 0 0 8px; font-size: 24px; line-height: 1.3; }
-.guide-content > p:last-child { margin: 0; font-size: 16px; line-height: 1.7; }
-.guide-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 18px 24px 6px; }
-.guide-controls .button { min-height: 44px; min-width: 80px; font-size: 14px; }
-.guide-controls button:disabled { opacity: .35; cursor: default; }
-.guide-pages { display: flex; gap: 3px; }
-.guide-pages button { min-height: 44px; min-width: 32px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--ink); font: 14px var(--mono); cursor: pointer; }
-.guide-pages button[aria-current="true"] { border-color: var(--ink); background: var(--paper); font-weight: 700; }
-.guide-hint { margin: 0; padding: 8px 24px 20px; color: var(--muted); font-size: 13px; }
+.guide-header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 14px 0 24px; background: var(--white); font-size: 13px; color: var(--muted); }
+.guide-close { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--ink); font-size: 26px; line-height: 1; }
+.guide-close:hover, .guide-arrow:hover { background: var(--paper); }
+.guide-visual { display: grid; place-items: center; height: 156px; margin: 8px 24px 0; padding: 16px; border-radius: 12px; background: var(--paper); }
+.guide-sample { width: 100%; max-width: 270px; color: var(--ink); font-size: 14px; }
+.guide-sample-label { display: block; margin: 0 0 5px; font-size: 12px; color: var(--muted); }
+.guide-sample-field { display: flex; align-items: center; height: 30px; padding: 0 10px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--white); }
+.guide-sample-line { width: 55%; height: 5px; border-radius: 4px; background: #c4c4c4; }
+.guide-sample-status { display: table; margin-bottom: 12px; padding: 4px 10px; border-radius: 5px; background: var(--ink); color: var(--white); font-size: 12px; }
+.guide-sample-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; line-height: 1.3; }
+.guide-sample-check { display: grid; place-items: center; width: 20px; height: 20px; flex: none; border: 1px solid var(--ink); border-radius: 4px; background: var(--ink); color: var(--white); }
+.guide-sample-check.empty { background: var(--white); border-color: #aaa; }
+.guide-sample-date { display: flex; align-items: center; height: 40px; border-bottom: 1px solid var(--line); font: 17px var(--mono); }
+.guide-sample-formats { display: flex; gap: 7px; margin-top: 12px; }
+.guide-sample-formats span { border: 1px solid var(--line); border-radius: 5px; background: var(--white); padding: 4px 11px; font: 12px var(--mono); }
+.guide-content { padding: 20px 24px 0; min-height: 128px; }
+.guide-content h2 { margin: 0 0 8px; font-size: 22px; line-height: 1.3; }
+.guide-content > p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--muted); }
+.guide-controls { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 24px; }
+.guide-arrow { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--ink); }
+.guide-arrow svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.guide-controls button:disabled { opacity: .25; cursor: default; }
+.guide-pages { display: flex; }
+.guide-pages button { display: grid; place-items: center; width: 30px; height: 44px; padding: 0; border: 0; background: transparent; }
+.guide-pages button::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+.guide-pages button[aria-current="true"]::after { background: var(--ink); }
+.guide-hint { margin: 0; padding: 0 24px 20px; color: var(--muted); font-size: 12px; line-height: 1.6; }
 @media (max-width: 490px) {
-  .guide-content { padding: 14px 16px 4px; }
-  .guide-content h2 { font-size: 22px; }
-  .guide-controls { padding-inline: 12px; gap: 4px; }
-  .guide-hint { padding-inline: 16px; }
-  .guide-figure { padding: 8px; }
+  .guide-header { padding-left: 20px; }
+  .guide-visual { margin-inline: 20px; }
+  .guide-content { padding-inline: 20px; }
+  .guide-hint { padding-inline: 20px; }
 }
 @media print { .guide { display: none; } }

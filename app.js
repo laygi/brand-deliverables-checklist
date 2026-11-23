@@ -116,14 +116,14 @@ function renderEditor(closed = new Set()) {
   for (const input of document.querySelectorAll('[data-project]')) {
     input.value = state.project[input.dataset.project];
   }
-  const cards = displayCatalog.map(({ id, name, label, icon, purpose, items }, index) => {
+  const cards = displayCatalog.map(({ id, name, label, icon, purpose, items }) => {
     const card = element('article', '', 'category');
     card.dataset.category = id;
     card.innerHTML = `
       <div class="category-top">
         <div class="category-title">
           <span class="category-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="${icon}"/></svg></span>
-          <div><p class="category-kicker">${String(index + 1).padStart(2, '0')} / ${label}</p><h3>${name}</h3></div>
+          <h3>${name}</h3>
         </div>
         <fieldset class="choices">
           <legend class="sr-only">${copy.categoryStatus(name)}</legend>

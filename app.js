@@ -59,6 +59,7 @@ function renderLanguage(nextLanguage) {
   const closed = new Set(Array.from(document.querySelectorAll('.category details:not([open])'), (detail) => detail.closest('.category').dataset.category));
   renderEditor(closed);
   renderSummary();
+  renderGuide();
 }
 
 function restore(saved) {
@@ -382,4 +383,64 @@ for (const button of languageButtons) {
     renderLanguage(nextLanguage);
   });
 }
+
+
+const guideKey = 'brand-handoff-checklist:guide:v1';
+const guide = byId('guide');
+let guideIndex = 0;
+
+function renderGuide() {
+  const slides = guideCopy[language];
+  const slide = slides[guideIndex];
+  const image = byId('guide-image');
+  image.src = `./assets/guide-${language === 'en' ? 'en' : 'zh'}-${slide.id}.jpg`;
+  image.alt = slide.alt;
+  byId('guide-title').textContent = slide.title;
+  byId('guide-text').textContent = slide.text;
+  byId('guide-step').textContent = `${guideIndex + 1} / ${slides.length}`;
+  byId('guide-prev').disabled = guideIndex === 0;
+  byId('guide-next').disabled = guideIndex === slides.length - 1;
+  byId('guide-pages').replaceChildren(...slides.map((item, index) => {
+    const button = element('button', String(index + 1));
+    button.type = 'button';
+    button.setAttribute('aria-label', item.title);
+    button.setAttribute('aria-current', String(index === guideIndex));
+    button.addEventListener('click', () => {
+      guideIndex = index;
+      renderGuide();
+    });
+    return button;
+  }));
+}
+
+function openGuide() {
+  guideIndex = 0;
+  renderGuide();
+  guide.showModal();
+}
+
+byId('open-guide').addEventListener('click', openGuide);
+byId('guide-close').addEventListener('click', () => guide.close());
+byId('guide-prev').addEventListener('click', () => {
+  guideIndex = Math.max(0, guideIndex - 1);
+  renderGuide();
+});
+byId('guide-next').addEventListener('click', () => {
+  guideIndex = Math.min(guideCopy[language].length - 1, guideIndex + 1);
+  renderGuide();
+});
+guide.addEventListener('close', () => {
+  try {
+    localStorage.setItem(guideKey, 'seen');
+  } catch {
+    // The guide remains usable when storage is unavailable.
+  }
+});
+let guideSeen = false;
+try {
+  guideSeen = localStorage.getItem(guideKey) === 'seen';
+} catch {
+  // Show the guide on each visit if this browser cannot remember dismissal.
+}
 renderLanguage(preferredLanguage());
+if (!guideSeen) openGuide();

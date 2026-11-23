@@ -34,3 +34,5 @@ GitHub Free 的 Pages 需要公開儲存庫。網站和原始碼都可由網路�
 3. 在 **Actions** 選擇 **Publish checklist to GitHub Pages**，按 **Run workflow** 並選擇主要分支。部署成功後，從工作流程或 Pages 設定取得網址。每次更新檔案後可手動重跑。
 
 部署流程只打包 `index.html`、`styles.css`、`catalog.js`、`locales.js` 與 `app.js`。資源使用相對路徑，因此可在 GitHub Pages 專案子路徑運作。
+
+首次進入會顯示三頁圖文教學，介紹專案填寫、交付物勾選與日期匯出。每頁使用示範資料的實際介面截圖。關閉後於目前瀏覽器記住已看過，可從頁尾「使用說明」重開。更換瀏覽器、清除網站儲存或無法使用本機儲存時會再次出現。教學文字與圖片都隨中英文切換。

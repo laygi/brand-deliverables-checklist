@@ -7,10 +7,10 @@
   <meta name="color-scheme" content="light">
   <title data-copy="title">品牌交付確認清單</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%23151515'/%3E%3Cpath d='M20 8v24M8 20h24M12 12l16 16m0-16L12 28' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=guide-1">
   <script src="./catalog.js" defer></script>
-  <script src="./locales.js" defer></script>
-  <script src="./app.js" defer></script>
+  <script src="./locales.js?v=guide-1" defer></script>
+  <script src="./app.js?v=guide-1" defer></script>
 </head>
 <body>
   <div class="screen">
@@ -84,9 +84,27 @@
         </aside>
       </div>
       <noscript><p class="distinction">請啟用 JavaScript 以填寫清單與產生摘要。</p></noscript>
-      <footer><span data-copy="footer">品牌交付工作台 · 確認清單</span><button type="button" id="reset" data-copy="reset" class="text-button">清除本機草稿</button></footer>
+      <footer><span data-copy="footer">品牌交付工作台 · 確認清單</span><button type="button" id="open-guide" data-copy="guideOpen" class="text-button">使用說明</button><button type="button" id="reset" data-copy="reset" class="text-button">清除本機草稿</button></footer>
     </main>
   </div>
+  <dialog id="guide" class="guide" aria-labelledby="guide-title" aria-describedby="guide-text">
+    <div class="guide-header">
+      <span data-copy="guideLabel">開始前的小指南</span>
+      <button id="guide-close" type="button" class="guide-close" aria-label="關閉說明，開始填寫" data-copy="guideClose" data-copy-attr="aria-label" autofocus>×</button>
+    </div>
+    <figure class="guide-figure"><img id="guide-image" width="1024" height="900" alt=""></figure>
+    <div class="guide-content" aria-live="polite" aria-atomic="true">
+      <p id="guide-step" class="guide-step"></p>
+      <h2 id="guide-title"></h2>
+      <p id="guide-text"></p>
+    </div>
+    <div class="guide-controls">
+      <button id="guide-prev" class="button secondary" type="button" data-copy="guidePrev">上一頁</button>
+      <div id="guide-pages" class="guide-pages" role="group" aria-label="說明頁面" data-copy="guidePages" data-copy-attr="aria-label"></div>
+      <button id="guide-next" class="button primary" type="button" data-copy="guideNext">下一頁</button>
+    </div>
+    <p class="guide-hint" data-copy="guideHint">看完後，按右上角 × 開始填寫。日後可從頁尾重新開啟。</p>
+  </dialog>
   <main id="print-report" class="print-report" data-copy="reportTitle" data-copy-attr="aria-label" aria-label="品牌交付物確認結果"></main>
 </body>
 </html>
